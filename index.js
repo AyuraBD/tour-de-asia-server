@@ -56,23 +56,15 @@ async function run() {
       const destination = await client.db('tour-destination').collection('destination').findOne(query);
       res.send(destination);
     })
-    app.get(`/profile/:email`, async(req, res) =>{
-      const email = req.params.email;
-      try{
-        const user = await client.db('tour-destination').collection('users').findOne({email});
-        console.log(user);
-        if(!user){
-          return res.status(404).send({error: 'User not found'});
-        }
-        res.send(user);
-      } catch(err){
-        console.error(err);
-        res.status(500).send({error: 'Internal server error'});
-      }
+    app.get(`/profile`, async(req, res) =>{
+      const email = req.query.email;
+      const query = {email: email};
+      const cursor = await client.db('tour-destination').collection('users').findOne(query);
+      res.send(cursor);
     })
-    app.get(`/mylist/:email`, async(req, res) =>{
-      const email = req.params.email;
-      const query = {email};
+    app.get(`/mylist`, async(req, res) =>{
+      const email = req.query.email;
+      const query = {email: email};
       const cursor = client.db('tour-destination').collection('destination').find(query);
       const mylist = await cursor.toArray();
       res.send(mylist);
@@ -122,9 +114,9 @@ async function run() {
       const countries = await cursor.toArray();
       res.send(countries);
     })
-    app.get(`/country/:country_name`, async (req, res) =>{
-      const country_name = req.params.country_name;
-      const query = {country_name};
+    app.get(`/country/country_name/`, async (req, res) =>{
+      const country_name = req.query.country_name;
+      const query = {country_name: country_name};
       const cursor = client.db('tour-destination').collection('destination').find(query);
       const country = await cursor.toArray();
       res.send(country);
